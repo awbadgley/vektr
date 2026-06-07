@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>CHIPTUNE COMPOSER</title>
+  <title>SIGNAL</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Silkscreen&family=Share+Tech+Mono&display=swap" rel="stylesheet" />
   <style>
@@ -174,7 +174,7 @@
     /* ── Screen bezel — neon tube border ─── */
     #screen-bezel {
       width:100%; flex:1; min-height:0;
-      background:rgba(0,0,20,0.6);
+      background:transparent;
       border:2px solid var(--magenta);
       padding:calc(var(--u)*0.9);
       display:flex; flex-direction:column;
@@ -190,7 +190,7 @@
     #screen {
       flex:1; min-height:0;
       display:flex; flex-direction:column;
-      background:rgba(0,0,0,0.85);
+      background:rgba(0,0,0,0.55);
       border:1px solid rgba(255,0,255,0.25);
       padding:calc(var(--u)*0.7) calc(var(--u)*0.6);
       position:relative;
@@ -565,25 +565,26 @@
       font-size:clamp(0.35rem, calc(var(--u)*0.52), 0.78rem);
     }
 
-    /* Coin slot — bottom neon strip */
-    #coin-slot {
+    /* Status bar — bottom neon strip */
+    #status-bar {
       width:100%; flex-shrink:0;
-      display:flex; justify-content:center;
-      padding:calc(var(--u)*0.4) 0 calc(var(--u)*0.25);
+      display:flex; justify-content:center; align-items:center;
+      padding:calc(var(--u)*0.35) 0 calc(var(--u)*0.22);
       background:transparent;
-      border-top:2px solid var(--cyan);
-      box-shadow:
-        0 -3px 6px var(--cyan),
-        0 -3px 20px rgba(0,255,255,0.3);
+      border-top:1px solid rgba(0,255,255,0.3);
+      box-shadow:0 -2px 8px rgba(0,255,255,0.2);
     }
-    #coin-text {
+    #playstate-text {
       font-family:'Silkscreen', monospace;
-      font-size:clamp(0.35rem, calc(var(--u)*0.52), 0.75rem);
-      letter-spacing:0.28em; color:#fff;
-      text-shadow:0 0 6px var(--cyan), 0 0 16px rgba(0,255,255,0.5);
-      animation:boot-blink 2s step-end infinite;
+      font-size:clamp(0.32rem, calc(var(--u)*0.48), 0.68rem);
+      letter-spacing:0.28em; color:rgba(0,255,255,0.35);
+      animation:boot-blink 2.5s step-end infinite;
     }
-    #coin-text.playing { animation:none; text-shadow:0 0 8px #fff, 0 0 20px var(--green), 0 0 40px var(--green); }
+    #playstate-text.playing {
+      animation:none;
+      color:#fff;
+      text-shadow:0 0 6px #fff, 0 0 18px var(--green), 0 0 36px rgba(57,255,20,0.5);
+    }
 
     /* Note popup */
     #note-popup {
@@ -764,9 +765,9 @@
 <!-- Boot screen -->
 <div id="boot">
   <div id="boot-press">
-    <div id="boot-title">♪ CHIPTUNE<br>COMPOSER ♪</div>
-    <div class="boot-subtitle">— ARCADE EDITION —</div>
-    <div class="boot-blink" style="font-size:0.8rem;letter-spacing:0.22em;">▶ PRESS ANY KEY ◀</div>
+    <div id="boot-title">S I G N A L</div>
+    <div class="boot-subtitle">♪ NEON STEP SEQUENCER ♪</div>
+    <div class="boot-blink" style="font-size:0.8rem;letter-spacing:0.28em;">▶ PRESS ANY KEY ◀</div>
   </div>
 </div>
 
@@ -783,9 +784,9 @@
   <!-- Marquee -->
   <div id="marquee">
     <span id="marquee-inner">
-      ♪ CHIPTUNE COMPOSER ♪ &nbsp;&nbsp;&nbsp; LEAD · PULSE · BASS · DRUM &nbsp;&nbsp;&nbsp;
-      ♪ CLICK STEPS TO COMPOSE · PRESS PLAY TO HEAR · SAVE YOUR SONGS &nbsp;&nbsp;&nbsp;
-      ♪ CHIPTUNE COMPOSER ♪ &nbsp;&nbsp;&nbsp;
+      ★ SIGNAL ★ &nbsp;&nbsp;&nbsp; LEAD · PULSE · BASS · DRUM &nbsp;&nbsp;&nbsp;
+      ★ CLICK STEPS · PRESS PLAY · TAP TEMPO · SHARE YOUR PATTERN &nbsp;&nbsp;&nbsp;
+      ★ SIGNAL ★ &nbsp;&nbsp;&nbsp; NEON STEP SEQUENCER &nbsp;&nbsp;&nbsp;
     </span>
   </div>
 
@@ -799,7 +800,7 @@
       <div class="screen-corner br"></div>
 
       <div id="screen-header">
-        <div id="screen-title">♪ STEP SEQUENCER</div>
+        <div id="screen-title">★ SIGNAL</div>
         <div id="step-counter">STEP: <span id="step-num">--</span> / 16</div>
       </div>
 
@@ -847,7 +848,7 @@
           <button class="oct-btn" id="oct-down">▼</button>
           <div id="octave-display">4</div>
           <button class="oct-btn" id="oct-up">▲</button>
-          <span style="font-size:0.6rem;color:rgba(196,77,255,0.4);margin-left:8px;letter-spacing:0.05em;">OCT</span>
+          <span style="font-size:0.6rem;color:rgba(0,255,255,0.3);margin-left:8px;letter-spacing:0.05em;">OCT</span>
         </div>
         <div id="keys-row"><!-- built by JS --></div>
       </div>
@@ -908,15 +909,15 @@
       <div id="status-display">
         <div id="status-msg">READY.</div>
         <div>CHANNELS: 4 &nbsp;|&nbsp; STEPS: 16</div>
-        <div>© 2026 AARON BADGLEY</div>
+        <div>© 2026 SIGNAL</div>
       </div>
     </div>
 
   </div>
 
-  <!-- Coin slot -->
-  <div id="coin-slot">
-    <div id="coin-text">♦ INSERT COIN ♦</div>
+  <!-- Status bar -->
+  <div id="status-bar">
+    <div id="playstate-text">■ STOPPED</div>
   </div>
 
 </div>
@@ -1092,8 +1093,8 @@ function startPlaying() {
   nextStepTime = audioCtx.currentTime + 0.05;
   scheduleLoop();
   document.getElementById('btn-play').classList.add('active');
-  document.getElementById('coin-text').textContent = '▶ NOW PLAYING ▶';
-  document.getElementById('coin-text').classList.add('playing');
+  document.getElementById('playstate-text').textContent = '▶ PLAYING';
+  document.getElementById('playstate-text').classList.add('playing');
   setStatus('PLAYING...');
 }
 
@@ -1146,8 +1147,8 @@ function stopPlaying() {
   state.currentStep = -1;
   document.getElementById('step-num').textContent = '--';
   document.getElementById('btn-play').classList.remove('active');
-  document.getElementById('coin-text').textContent = '♦ INSERT COIN ♦';
-  document.getElementById('coin-text').classList.remove('playing');
+  document.getElementById('playstate-text').textContent = '■ STOPPED';
+  document.getElementById('playstate-text').classList.remove('playing');
   renderPlayhead();
   setStatus('STOPPED.');
 }
