@@ -497,6 +497,179 @@
       text-align:right; font-family:'Silkscreen', monospace;
     }
     #note-popup-close:hover { color:var(--cyan); }
+
+    /* ══════════════════════════════════════════════
+       VISUAL OVERHAUL
+    ══════════════════════════════════════════════ */
+
+    /* ── Channel color theming ─────────────────── */
+    /* ch-0 LEAD: cyan */
+    .ch-0 .channel-label        { color:rgba(0,255,204,0.55); }
+    .ch-0 .channel-label.active { color:#00ffcc; text-shadow:0 0 8px rgba(0,255,204,1),0 0 24px rgba(0,255,204,0.6); }
+    .ch-0 .channel-label.muted  { color:rgba(0,255,204,0.18)!important; }
+    .ch-0 .step                 { border-color:rgba(0,255,204,0.16); background:#04100d; }
+    .ch-0 .step:hover           { border-color:rgba(0,255,204,0.45); background:#091a15; }
+    .ch-0 .step.on              { border-color:#00ffcc; color:#00ffcc; background:#081813;
+                                  box-shadow:inset 0 0 14px rgba(0,255,204,0.3),0 0 18px rgba(0,255,204,0.6); }
+    .ch-0 .step.playing.on      { background:#0d2820; }
+    .ch-0 .vol-pip.active       { background:rgba(0,255,204,0.75); }
+
+    /* ch-1 PULSE: lime */
+    .ch-1 .channel-label        { color:rgba(170,255,0,0.55); }
+    .ch-1 .channel-label.active { color:#aaff00; text-shadow:0 0 8px rgba(170,255,0,1),0 0 24px rgba(170,255,0,0.6); }
+    .ch-1 .channel-label.muted  { color:rgba(170,255,0,0.18)!important; }
+    .ch-1 .step                 { border-color:rgba(170,255,0,0.16); background:#090f01; }
+    .ch-1 .step:hover           { border-color:rgba(170,255,0,0.45); background:#131a03; }
+    .ch-1 .step.on              { border-color:#aaff00; color:#aaff00; background:#111600;
+                                  box-shadow:inset 0 0 14px rgba(170,255,0,0.25),0 0 18px rgba(170,255,0,0.55); }
+    .ch-1 .step.playing.on      { background:#1d2800; }
+    .ch-1 .vol-pip.active       { background:rgba(170,255,0,0.75); }
+
+    /* ch-2 BASS: purple */
+    .ch-2 .channel-label        { color:rgba(170,68,255,0.55); }
+    .ch-2 .channel-label.active { color:#aa44ff; text-shadow:0 0 8px rgba(170,68,255,1),0 0 24px rgba(170,68,255,0.6); }
+    .ch-2 .channel-label.muted  { color:rgba(170,68,255,0.18)!important; }
+    .ch-2 .step                 { border-color:rgba(170,68,255,0.16); background:#080514; }
+    .ch-2 .step:hover           { border-color:rgba(170,68,255,0.45); background:#10091e; }
+    .ch-2 .step.on              { border-color:#aa44ff; color:#aa44ff; background:#0e0820;
+                                  box-shadow:inset 0 0 14px rgba(170,68,255,0.25),0 0 18px rgba(170,68,255,0.55); }
+    .ch-2 .step.playing.on      { background:#1a1030; }
+    .ch-2 .vol-pip.active       { background:rgba(170,68,255,0.75); }
+
+    /* ch-3 DRUM: orange */
+    .ch-3 .channel-label        { color:rgba(255,85,0,0.55); }
+    .ch-3 .channel-label.active { color:#ff5500; text-shadow:0 0 8px rgba(255,85,0,1),0 0 24px rgba(255,85,0,0.6); }
+    .ch-3 .channel-label.muted  { color:rgba(255,85,0,0.18)!important; }
+    .ch-3 .step                 { border-color:rgba(255,85,0,0.16); background:#0f0600; }
+    .ch-3 .step:hover           { border-color:rgba(255,85,0,0.45); background:#190a00; }
+    .ch-3 .step.on              { border-color:#ff5500; color:#ff5500; background:#180700;
+                                  box-shadow:inset 0 0 14px rgba(255,85,0,0.25),0 0 18px rgba(255,85,0,0.55); }
+    .ch-3 .step.playing.on      { background:#2a1000; }
+    .ch-3 .vol-pip.active       { background:rgba(255,85,0,0.75); }
+
+    /* Channel buttons — colored when active */
+    .ch-btn.ch-0.active { border-color:#00ffcc; color:#00ffcc; box-shadow:0 0 10px rgba(0,255,204,0.4); }
+    .ch-btn.ch-1.active { border-color:#aaff00; color:#aaff00; box-shadow:0 0 10px rgba(170,255,0,0.4); }
+    .ch-btn.ch-2.active { border-color:#aa44ff; color:#aa44ff; box-shadow:0 0 10px rgba(170,68,255,0.4); }
+    .ch-btn.ch-3.active { border-color:#ff5500; color:#ff5500; box-shadow:0 0 10px rgba(255,85,0,0.4); }
+
+    /* ── Playing step — white flash override ───── */
+    .step.playing {
+      border-color:rgba(255,255,255,0.95)!important;
+      box-shadow:0 0 22px rgba(255,255,255,0.7),0 0 44px rgba(255,255,255,0.3)!important;
+    }
+    .step.playing.on { background:rgba(255,255,255,0.13)!important; }
+
+    /* ── Beat indicator lights ──────────────────── */
+    #beat-lights-row {
+      flex-shrink:0;
+      margin-bottom: calc(var(--u) * 0.3);
+    }
+    .beat-light {
+      flex:1;
+      height: calc(var(--u) * 0.55);
+      border-radius:999px;
+      background:rgba(255,255,255,0.04);
+      border:1px solid rgba(255,255,255,0.08);
+      transition:background 0.04s, box-shadow 0.04s, border-color 0.04s;
+    }
+    /* dim "has note" glow per channel */
+    .beat-light.has-ch0 { background:rgba(0,255,204,0.1);   border-color:rgba(0,255,204,0.3); }
+    .beat-light.has-ch1 { background:rgba(170,255,0,0.1);   border-color:rgba(170,255,0,0.3); }
+    .beat-light.has-ch2 { background:rgba(170,68,255,0.1);  border-color:rgba(170,68,255,0.3); }
+    .beat-light.has-ch3 { background:rgba(255,85,0,0.1);    border-color:rgba(255,85,0,0.3); }
+    /* playhead flash */
+    .beat-light.active  {
+      background:rgba(255,255,255,0.9)!important;
+      border-color:rgba(255,255,255,0.8)!important;
+      box-shadow:0 0 10px rgba(255,255,255,0.8),0 0 22px rgba(255,255,255,0.4);
+    }
+    /* beat-light spacer aligns with step group gaps */
+    .beat-light.group-start { margin-left: calc(var(--u) * 0.4); }
+
+    /* ── Screen CRT corner brackets ─────────────── */
+    #screen { position:relative; }
+    .screen-corner {
+      position:absolute;
+      width:  calc(var(--u) * 1.6);
+      height: calc(var(--u) * 1.6);
+      border-color:rgba(0,255,204,0.55);
+      border-style:solid;
+      pointer-events:none;
+      z-index:20;
+    }
+    .screen-corner.tl { top:calc(var(--u)*0.35);    left:calc(var(--u)*0.35);  border-width:2px 0 0 2px; }
+    .screen-corner.tr { top:calc(var(--u)*0.35);    right:calc(var(--u)*0.35); border-width:2px 2px 0 0; }
+    .screen-corner.bl { bottom:calc(var(--u)*0.35); left:calc(var(--u)*0.35);  border-width:0 0 2px 2px; }
+    .screen-corner.br { bottom:calc(var(--u)*0.35); right:calc(var(--u)*0.35); border-width:0 2px 2px 0; }
+
+    /* ── Screen scanline + vignette overlay ──────── */
+    #screen::after {
+      content:'';
+      position:absolute;
+      inset:0;
+      background:
+        repeating-linear-gradient(
+          to bottom, transparent 0px, transparent 3px,
+          rgba(0,0,0,0.09) 3px, rgba(0,0,0,0.09) 4px
+        ),
+        radial-gradient(ellipse at 50% 35%, transparent 35%, rgba(0,0,0,0.65) 100%);
+      pointer-events:none;
+      z-index:15;
+    }
+
+    /* ── Control panel dot-grid texture + rivets ── */
+    #control-panel {
+      position:relative;
+      background-image:
+        radial-gradient(circle, rgba(0,255,204,0.035) 1px, transparent 1px);
+      background-size: calc(var(--u)*1.1) calc(var(--u)*1.1);
+    }
+    .rivet {
+      position:absolute;
+      width: calc(var(--u)*0.65);
+      height:calc(var(--u)*0.65);
+      border-radius:50%;
+      background:radial-gradient(circle at 35% 35%, #252528, #0e0e10);
+      border:1px solid #2a2a2e;
+      box-shadow:inset 0 1px 3px rgba(0,0,0,0.9), inset -1px -1px 0 rgba(255,255,255,0.03);
+      pointer-events:none;
+      z-index:2;
+    }
+    .rivet.tl { top:calc(var(--u)*0.45);    left:calc(var(--u)*0.45); }
+    .rivet.tr { top:calc(var(--u)*0.45);    right:calc(var(--u)*0.45); }
+    .rivet.bl { bottom:calc(var(--u)*0.45); left:calc(var(--u)*0.45); }
+    .rivet.br { bottom:calc(var(--u)*0.45); right:calc(var(--u)*0.45); }
+
+    /* ── Marquee upgrade ─────────────────────────── */
+    #marquee {
+      border-bottom: 1px solid rgba(0,255,204,0.1);
+      box-shadow: 0 2px 12px rgba(0,255,204,0.08);
+    }
+
+    /* ── BPM display — LED feel ──────────────────── */
+    #bpm-display {
+      font-size: clamp(1.2rem, calc(var(--u)*2.2), 3.5rem);
+      border-color: rgba(0,255,204,0.4);
+      box-shadow:
+        inset 0 0 24px rgba(0,255,204,0.07),
+        0 0 16px rgba(0,255,204,0.2),
+        0 0 40px rgba(0,255,204,0.08);
+      letter-spacing: 0.15em;
+    }
+
+    /* ── Screen header upgrade ───────────────────── */
+    #screen-header {
+      border-bottom: 1px solid rgba(0,255,204,0.1);
+      padding-bottom: calc(var(--u)*0.4);
+      margin-bottom: calc(var(--u)*0.5);
+    }
+
+    /* ── Visualizer upgrade ──────────────────────── */
+    #visualizer {
+      border-color: rgba(0,255,204,0.15);
+      box-shadow: inset 0 0 12px rgba(0,0,0,0.8);
+    }
   </style>
 </head>
 <body>
@@ -531,9 +704,22 @@
   <!-- Screen bezel -->
   <div id="screen-bezel">
     <div id="screen">
+      <!-- CRT corner brackets -->
+      <div class="screen-corner tl"></div>
+      <div class="screen-corner tr"></div>
+      <div class="screen-corner bl"></div>
+      <div class="screen-corner br"></div>
+
       <div id="screen-header">
         <div id="screen-title">♪ STEP SEQUENCER</div>
         <div id="step-counter">STEP: <span id="step-num">--</span> / 16</div>
+      </div>
+
+      <!-- Beat indicator lights — built by JS -->
+      <div class="channel-row" id="beat-lights-row">
+        <div class="channel-label"></div>
+        <div class="steps" id="beat-lights-inner"></div>
+        <div style="flex-shrink:0;width:calc(var(--u)*0.3 + var(--u)*0.35*4 + var(--u)*0.18*3)"></div>
       </div>
 
       <div id="sequencer">
@@ -548,6 +734,10 @@
 
   <!-- Control panel -->
   <div id="control-panel">
+    <div class="rivet tl"></div>
+    <div class="rivet tr"></div>
+    <div class="rivet bl"></div>
+    <div class="rivet br"></div>
 
     <!-- Left: channel selector + note keyboard -->
     <div id="left-controls">
@@ -830,7 +1020,7 @@ function buildUI() {
   seq.innerHTML = '';
   state.channels.forEach((ch, ci) => {
     const row = document.createElement('div');
-    row.className = 'channel-row';
+    row.className = `channel-row ch-${ci}`;
     row.dataset.ch = ci;
 
     const label = document.createElement('div');
@@ -884,6 +1074,7 @@ function buildUI() {
     const btn = document.createElement('button');
     btn.className = 'ch-btn' + (ci === state.selectedChannel ? ' active' : '');
     btn.textContent = ['LEAD','PULSE','BASS','DRUM'][ci];
+    btn.classList.add(`ch-${ci}`);
     btn.addEventListener('click', () => selectChannel(ci));
     chBtns.appendChild(btn);
   });
@@ -891,6 +1082,33 @@ function buildUI() {
   // Note keys
   buildKeyboard();
   updateNoteDisplay();
+  buildBeatLights();
+}
+
+function buildBeatLights() {
+  const inner = document.getElementById('beat-lights-inner');
+  if (!inner) return;
+  inner.innerHTML = '';
+  for (let s = 0; s < 16; s++) {
+    const light = document.createElement('div');
+    light.className = 'beat-light' + (s > 0 && s % 4 === 0 ? ' group-start' : '');
+    light.id = `bl-${s}`;
+    inner.appendChild(light);
+  }
+  updateBeatLightNotes();
+}
+
+function updateBeatLightNotes() {
+  for (let s = 0; s < 16; s++) {
+    const light = document.getElementById(`bl-${s}`);
+    if (!light) continue;
+    // Find topmost channel with a note at this step (ch-0 takes priority)
+    let topCh = -1;
+    state.channels.forEach((ch, ci) => { if (ch.steps[s] && topCh === -1) topCh = ci; });
+    const base = 'beat-light' + (s > 0 && s % 4 === 0 ? ' group-start' : '');
+    light.className = base + (topCh >= 0 ? ` has-ch${topCh}` : '');
+    if (state.playing && s === state.currentStep) light.classList.add('active');
+  }
 }
 
 function buildKeyboard() {
@@ -960,6 +1178,11 @@ function renderPlayhead() {
       el.classList.add('playing');
     }
   });
+  // Beat lights
+  for (let s = 0; s < 16; s++) {
+    const light = document.getElementById(`bl-${s}`);
+    if (light) light.classList.toggle('active', state.playing && s === state.currentStep);
+  }
 }
 
 function selectChannel(ci) {
@@ -994,6 +1217,7 @@ function onStepClick(e, ci, si) {
     }
     document.querySelectorAll('.step').forEach(el => el.classList.remove('selected-step'));
     renderStep(ci, si);
+    updateBeatLightNotes();
     beep(200, 0.04, 0.03);
   } else {
     // Activate with selected note
@@ -1002,6 +1226,7 @@ function onStepClick(e, ci, si) {
     document.querySelectorAll('.step').forEach(el => el.classList.remove('selected-step'));
     e.currentTarget.classList.add('selected-step');
     renderStep(ci, si);
+    updateBeatLightNotes();
     playNote(ci, state.selectedNote, state.selectedOctave);
     beep(440, 0.04, 0.02);
   }
@@ -1014,6 +1239,7 @@ function onStepRightClick(ci, si) {
     state.selectedStepIdx = null;
   }
   renderStep(ci, si);
+  updateBeatLightNotes();
   const cell = document.querySelector(`.step[data-ch="${ci}"][data-step="${si}"]`);
   if (cell) cell.classList.remove('selected-step');
 }
