@@ -384,22 +384,22 @@
       box-shadow:0 0 6px var(--cyan), 0 0 16px rgba(0,255,255,0.4);
     }
 
-    #keys-row { display:flex; gap:calc(var(--u)*0.22); }
+    #keys-row { display:flex; gap:calc(var(--u)*0.18); }
     .key-btn {
-      flex:1; height:calc(var(--u)*3.8);
+      flex:1; height:calc(var(--u)*2.5);
       border:1px solid rgba(255,255,255,0.5);
       background:rgba(255,255,255,0.18);
       cursor:pointer;
       display:flex; align-items:flex-end; justify-content:center;
-      padding-bottom:calc(var(--u)*0.25);
+      padding-bottom:calc(var(--u)*0.18);
       font-family:'Silkscreen', monospace;
-      font-size:clamp(0.3rem, calc(var(--u)*0.52), 0.75rem);
+      font-size:clamp(0.26rem, calc(var(--u)*0.42), 0.62rem);
       color:rgba(255,255,255,0.85);
       transition:all 0.1s;
       box-shadow:0 0 6px rgba(255,255,255,0.1), inset 0 0 8px rgba(255,255,255,0.06);
     }
     .key-btn.sharp {
-      height:calc(var(--u)*2.4); align-self:flex-start;
+      height:calc(var(--u)*1.7); align-self:flex-start;
       background:rgba(40,0,60,0.92);
       border-color:rgba(200,80,255,0.55);
       color:rgba(220,160,255,0.8);
@@ -418,7 +418,7 @@
     .key-btn.out-scale { opacity:0.45; }
 
     /* ── Transport — center ──────────────── */
-    #transport { display:flex; flex-direction:column; align-items:center; gap:calc(var(--u)*0.6); }
+    #transport { display:flex; flex-direction:row; align-items:center; justify-content:center; gap:calc(var(--u)*1.2); }
 
     #bpm-swing-row { display:flex; gap:calc(var(--u)*1.2); align-items:flex-start; justify-content:center; }
     #bpm-display-wrap { display:flex; flex-direction:column; align-items:center; gap:calc(var(--u)*0.35); }
@@ -481,9 +481,9 @@
     #swing-btns { display:flex; gap:calc(var(--u)*0.45); }
 
     /* Transport buttons — circular neon */
-    #transport-btns { display:flex; gap:calc(var(--u)*1); align-items:center; }
+    #transport-btns { display:flex; gap:calc(var(--u)*0.6); align-items:center; }
     .transport-btn {
-      width:calc(var(--u)*4.5); height:calc(var(--u)*4.5);
+      width:calc(var(--u)*3.6); height:calc(var(--u)*3.6);
       border-radius:50%;
       border:2px solid rgba(255,255,255,0.15);
       background:rgba(255,255,255,0.03);
