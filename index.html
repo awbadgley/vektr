@@ -225,10 +225,9 @@
     }
 
     .channel-row {
-      display:flex; align-items:stretch;
+      display:flex; align-items:center;
       gap:calc(var(--u)*0.35);
       flex:1; min-height:0;
-      padding: calc(var(--u)*2.2) 0;
     }
     .channel-label { align-self:center; }
 
@@ -243,11 +242,11 @@
     .channel-label:hover  { color:rgba(255,255,255,0.5); }
     .channel-label.muted  { opacity:0.2!important; text-decoration:line-through; }
 
-    .steps { display:flex; gap:calc(var(--u)*0.2); flex:1; min-width:0; align-items:stretch; }
+    .steps { display:flex; gap:calc(var(--u)*0.2); flex:1; min-width:0; align-items:center; }
 
     /* ── Step cells — dark off, neon on ─── */
     .step {
-      flex:1; aspect-ratio:unset; align-self:stretch;
+      flex:1; aspect-ratio:1;
       border:1px solid rgba(255,255,255,0.12);
       background:rgba(255,255,255,0.025);
       cursor:pointer;
@@ -1745,8 +1744,44 @@ function drawVis() {
   const canvas = document.getElementById('starfield');
   if (!canvas) return;
   const ctx = canvas.getContext('2d');
-  const STAR_COUNT = 220;
-  let stars = [];
+
+  const STAR_COUNT = 500;
+  const SPEED      = 0.018;   // z units per frame (increase for faster warp)
+  const FAR        = 1.0;     // z at which stars are spawned
+  const NEAR       = 0.001;   // z at which stars are culled
+
+  // Neon streak colors
+  const STAR_COLORS = [
+    [255, 255, 255],   // white (most common)
+    [255, 255, 255],
+    [255, 255, 255],
+    [180,  80, 255],   // violet
+    [ 80, 200, 255],   // cyan
+    [255,  60, 255],   // magenta
+    [ 80, 255, 140],   // green
+    [255, 200,  60],   // amber
+  ];
+
+  function newStar(spreadZ) {
+    const col = STAR_COLORS[Math.floor(Math.random() * STAR_COLORS.length)];
+    return {
+      x:  (Math.random() - 0.5) * 2,   // –1 … 1
+      y:  (Math.random() - 0.5) * 2,
+      z:  spreadZ ? Math.random() * FAR : FAR,
+      pz: null,
+      col,
+    };
+  }
+
+  const stars = Array.from({ length: STAR_COUNT }, () => newStar(true));
+
+  function project(x, y, z, W, H) {
+    const fov = 0.75;          // field of view scale
+    return {
+      sx: (x / z) * fov * Math.min(W, H) * 0.5 + W * 0.5,
+      sy: (y / z) * fov * Math.min(W, H) * 0.5 + H * 0.5,
+    };
+  }
 
   function resize() {
     canvas.width  = window.innerWidth;
@@ -1755,94 +1790,54 @@ function drawVis() {
   resize();
   window.addEventListener('resize', resize);
 
-  // Neon color pairs: [core color, glow color]
-  const STAR_COLORS = [
-    [[255, 80,  255], [255, 0,   255]],  // magenta
-    [[80,  255, 255], [0,   255, 255]],  // cyan
-    [[120, 255, 80 ], [57,  255, 20 ]],  // green
-    [[255, 200, 80 ], [255, 170, 0  ]],  // amber
-    [[255, 255, 255], [200, 200, 255]],  // white
-  ];
-
-  for (let i = 0; i < STAR_COUNT; i++) {
-    const pair = STAR_COLORS[Math.floor(Math.random() * STAR_COLORS.length)];
-    stars.push({
-      x: Math.random(), y: Math.random(),
-      r: Math.random() * 1.8 + 0.6,       // bigger: 0.6–2.4px
-      speed: Math.random() * 0.00006 + 0.00001,
-      twinkle: Math.random() * Math.PI * 2,
-      twinkleSpeed: Math.random() * 0.04 + 0.008,
-      core: pair[0], glow: pair[1],
-    });
-  }
-
   function drawStars() {
     const W = canvas.width, H = canvas.height;
-    // Dark fill — not clearRect — so we get the canvas color, not the body
-    ctx.fillStyle = '#000';
+
+    // Fade trail — semi-transparent black fill each frame
+    ctx.fillStyle = 'rgba(0,0,0,0.35)';
     ctx.fillRect(0, 0, W, H);
 
-    // Outrun perspective grid in the lower 45%
-    const horizon = H * 0.56;
-    const vp = W / 2;
-    // Vertical vanishing lines
-    for (let i = -14; i <= 14; i++) {
-      const alpha = 0.04 + Math.abs(i) * 0.002;
-      ctx.strokeStyle = `rgba(255,0,255,${alpha.toFixed(3)})`;
-      ctx.lineWidth = 1;
-      ctx.beginPath();
-      ctx.moveTo(vp + i * (W / 14), horizon);
-      ctx.lineTo(vp + i * W * 3, H * 1.6);
-      ctx.stroke();
-    }
-    // Horizontal grid lines — perspective-spaced, cyan
-    for (let r = 0; r < 9; r++) {
-      const t = (r + 1) / 9;
-      const y = horizon + (H - horizon) * (t * t);
-      const alpha = 0.04 + r * 0.022;
-      ctx.strokeStyle = `rgba(0,255,255,${alpha.toFixed(3)})`;
-      ctx.lineWidth = 1;
-      ctx.beginPath();
-      ctx.moveTo(0, y); ctx.lineTo(W, y);
-      ctx.stroke();
-    }
-    // Glow on the horizon line itself
-    ctx.strokeStyle = 'rgba(255,0,255,0.25)';
-    ctx.lineWidth = 1.5;
-    ctx.shadowBlur = 12;
-    ctx.shadowColor = '#ff00ff';
-    ctx.beginPath();
-    ctx.moveTo(0, horizon); ctx.lineTo(W, horizon);
-    ctx.stroke();
-    ctx.shadowBlur = 0;
-
-    // Stars in upper portion of screen (above grid)
     stars.forEach(s => {
-      s.twinkle += s.twinkleSpeed;
-      s.x += s.speed;
-      if (s.x > 1) { s.x = 0; s.y = Math.random() * 0.55; }
-      if (s.y > 0.57) return;
+      s.pz = s.z;
+      s.z -= SPEED;
 
-      const alpha = 0.55 + Math.sin(s.twinkle) * 0.35; // 0.2–0.9
-      const [cr, cg, cb] = s.core;
-      const [gr, gg, gb] = s.glow;
-      const sx = s.x * W, sy = s.y * H;
+      if (s.z <= NEAR) {
+        Object.assign(s, newStar(false));
+        s.pz = s.z;
+        return;
+      }
 
-      // Glow halo
+      const cur  = project(s.x, s.y, s.z,  W, H);
+      const prev = project(s.x, s.y, s.pz, W, H);
+
+      // Cull if off screen
+      if (cur.sx < -50 || cur.sx > W + 50 || cur.sy < -50 || cur.sy > H + 50) {
+        Object.assign(s, newStar(false));
+        s.pz = s.z;
+        return;
+      }
+
+      // Brightness: dim when far, bright when close
+      const brightness = Math.pow(1 - s.z / FAR, 1.8);
+      const [r, g, b]  = s.col;
+      const lineW      = Math.max(0.4, brightness * 2.5);
+      const alpha      = Math.min(1, brightness * 1.4);
+
+      // Streak from previous to current position
       ctx.beginPath();
-      const grad = ctx.createRadialGradient(sx, sy, 0, sx, sy, s.r * 4);
-      grad.addColorStop(0,   `rgba(${cr},${cg},${cb},${(alpha * 0.6).toFixed(2)})`);
-      grad.addColorStop(0.4, `rgba(${gr},${gg},${gb},${(alpha * 0.25).toFixed(2)})`);
-      grad.addColorStop(1,   `rgba(${gr},${gg},${gb},0)`);
-      ctx.fillStyle = grad;
-      ctx.arc(sx, sy, s.r * 4, 0, Math.PI * 2);
-      ctx.fill();
+      ctx.moveTo(prev.sx, prev.sy);
+      ctx.lineTo(cur.sx,  cur.sy);
+      ctx.strokeStyle = `rgba(${r},${g},${b},${alpha.toFixed(3)})`;
+      ctx.lineWidth   = lineW;
+      ctx.stroke();
 
-      // Bright core
-      ctx.beginPath();
-      ctx.fillStyle = `rgba(${cr},${cg},${cb},${Math.min(1, alpha).toFixed(2)})`;
-      ctx.arc(sx, sy, s.r, 0, Math.PI * 2);
-      ctx.fill();
+      // Bright dot at head
+      if (brightness > 0.5) {
+        ctx.beginPath();
+        ctx.arc(cur.sx, cur.sy, lineW * 0.9, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(${r},${g},${b},${Math.min(1, alpha * 1.3).toFixed(3)})`;
+        ctx.fill();
+      }
     });
 
     requestAnimationFrame(drawStars);
