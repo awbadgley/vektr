@@ -384,26 +384,26 @@
       box-shadow:0 0 6px var(--cyan), 0 0 16px rgba(0,255,255,0.4);
     }
 
-    #keys-row { display:flex; gap:calc(var(--u)*0.18); }
+    #keys-row { display:flex; gap:calc(var(--u)*0.22); }
     .key-btn {
-      flex:1; height:calc(var(--u)*2.5);
-      border:1px solid rgba(255,255,255,0.28);
-      background:rgba(255,255,255,0.07);
+      flex:1; height:calc(var(--u)*3.8);
+      border:1px solid rgba(255,255,255,0.5);
+      background:rgba(255,255,255,0.18);
       cursor:pointer;
       display:flex; align-items:flex-end; justify-content:center;
-      padding-bottom:calc(var(--u)*0.18);
+      padding-bottom:calc(var(--u)*0.25);
       font-family:'Silkscreen', monospace;
-      font-size:clamp(0.26rem, calc(var(--u)*0.42), 0.62rem);
-      color:rgba(255,255,255,0.6);
+      font-size:clamp(0.3rem, calc(var(--u)*0.52), 0.75rem);
+      color:rgba(255,255,255,0.85);
       transition:all 0.1s;
-      box-shadow:0 0 4px rgba(255,255,255,0.06), inset 0 0 6px rgba(255,255,255,0.04);
+      box-shadow:0 0 6px rgba(255,255,255,0.1), inset 0 0 8px rgba(255,255,255,0.06);
     }
     .key-btn.sharp {
-      height:calc(var(--u)*1.7); align-self:flex-start;
-      background:rgba(60,0,80,0.7);
-      border-color:rgba(255,100,255,0.35);
-      color:rgba(255,180,255,0.6);
-      box-shadow:0 0 4px rgba(180,0,255,0.15), inset 0 0 5px rgba(100,0,120,0.4);
+      height:calc(var(--u)*2.4); align-self:flex-start;
+      background:rgba(40,0,60,0.92);
+      border-color:rgba(200,80,255,0.55);
+      color:rgba(220,160,255,0.8);
+      box-shadow:0 0 5px rgba(160,0,220,0.25), inset 0 0 6px rgba(80,0,100,0.6);
     }
     .key-btn:hover {
       border-color:var(--magenta); color:var(--magenta);
