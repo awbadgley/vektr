@@ -1746,7 +1746,7 @@ function drawVis() {
   const ctx = canvas.getContext('2d');
 
   const STAR_COUNT = 500;
-  const SPEED      = 0.018;   // z units per frame (increase for faster warp)
+  const SPEED      = 0.005;   // z units per frame (increase for faster warp)
   const FAR        = 1.0;     // z at which stars are spawned
   const NEAR       = 0.001;   // z at which stars are culled
 
@@ -1794,7 +1794,7 @@ function drawVis() {
     const W = canvas.width, H = canvas.height;
 
     // Fade trail — semi-transparent black fill each frame
-    ctx.fillStyle = 'rgba(0,0,0,0.35)';
+    ctx.fillStyle = 'rgba(0,0,0,0.25)';
     ctx.fillRect(0, 0, W, H);
 
     stars.forEach(s => {
@@ -1820,8 +1820,8 @@ function drawVis() {
       // Brightness: dim when far, bright when close
       const brightness = Math.pow(1 - s.z / FAR, 1.8);
       const [r, g, b]  = s.col;
-      const lineW      = Math.max(0.4, brightness * 2.5);
-      const alpha      = Math.min(1, brightness * 1.4);
+      const lineW      = Math.max(0.8, brightness * 4.5);
+      const alpha      = Math.min(1, brightness * 2.0);
 
       // Streak from previous to current position
       ctx.beginPath();
