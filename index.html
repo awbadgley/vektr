@@ -387,29 +387,35 @@
     #keys-row { display:flex; gap:calc(var(--u)*0.18); }
     .key-btn {
       flex:1; height:calc(var(--u)*2.5);
-      border:1px solid rgba(255,255,255,0.1);
-      background:transparent;
+      border:1px solid rgba(255,255,255,0.28);
+      background:rgba(255,255,255,0.07);
       cursor:pointer;
       display:flex; align-items:flex-end; justify-content:center;
       padding-bottom:calc(var(--u)*0.18);
       font-family:'Silkscreen', monospace;
       font-size:clamp(0.26rem, calc(var(--u)*0.42), 0.62rem);
-      color:rgba(255,255,255,0.3);
+      color:rgba(255,255,255,0.6);
       transition:all 0.1s;
+      box-shadow:0 0 4px rgba(255,255,255,0.06), inset 0 0 6px rgba(255,255,255,0.04);
     }
     .key-btn.sharp {
       height:calc(var(--u)*1.7); align-self:flex-start;
-      background:rgba(255,255,255,0.04);
+      background:rgba(0,0,0,0.55);
+      border-color:rgba(255,255,255,0.18);
+      color:rgba(255,255,255,0.4);
+      box-shadow:none;
     }
     .key-btn:hover {
       border-color:var(--magenta); color:var(--magenta);
-      box-shadow:0 0 6px var(--magenta), 0 0 16px rgba(255,0,255,0.3);
+      background:rgba(255,0,255,0.1);
+      box-shadow:0 0 8px var(--magenta), 0 0 20px rgba(255,0,255,0.3);
     }
     .key-btn.selected {
       border-color:var(--magenta)!important; color:var(--magenta)!important;
-      box-shadow:0 0 8px var(--magenta), 0 0 20px rgba(255,0,255,0.5)!important;
+      background:rgba(255,0,255,0.12)!important;
+      box-shadow:0 0 10px var(--magenta), 0 0 24px rgba(255,0,255,0.5)!important;
     }
-    .key-btn.out-scale { opacity:0.18; }
+    .key-btn.out-scale { opacity:0.22; }
 
     /* ── Transport — center ──────────────── */
     #transport { display:flex; flex-direction:column; align-items:center; gap:calc(var(--u)*0.6); }
