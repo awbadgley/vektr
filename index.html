@@ -86,12 +86,6 @@
     .boot-blink { animation: boot-blink 1s step-end infinite; }
     @keyframes boot-blink { 0%,100%{opacity:1} 50%{opacity:0} }
 
-    #boot-text { line-height:1.8; white-space:pre-wrap; }
-    #boot-cursor {
-      display:inline-block; width:10px; height:1.1em;
-      background:var(--cyan); vertical-align:text-bottom;
-      animation: boot-blink 0.6s step-end infinite;
-    }
 
     /* ── Cabinet wrapper ─────────────────────────── */
     #cabinet {
@@ -663,9 +657,6 @@
   <div id="boot-press">
     <div id="boot-title">♪ CHIPTUNE<br>COMPOSER ♪</div>
     <div class="boot-blink" style="font-size:0.8rem;letter-spacing:0.18em;">PRESS ANY KEY TO START</div>
-  </div>
-  <div id="boot-sequence" style="display:none;width:100%;">
-    <div id="boot-text"></div><span id="boot-cursor"></span>
   </div>
 </div>
 
@@ -1363,60 +1354,18 @@ document.addEventListener('keydown', e => {
 document.getElementById('btn-loop').classList.add('active');
 
 // ── Boot Screen ───────────────────────────────────────────────────────────────
-const bootPress    = document.getElementById('boot-press');
-const bootSequence = document.getElementById('boot-sequence');
-const bootTextEl   = document.getElementById('boot-text');
-const bootEl       = document.getElementById('boot');
-
-const bootLines = [
-  { text: 'ABADGE BIOS v2.6 — Copyright (C) 2026', delay: 0 },
-  { text: 'CPU: Intel 486DX2 @ 66MHz', delay: 400 },
-  { text: 'RAM: 640K Conventional + 31MB Extended', delay: 700 },
-  { text: '', delay: 950 },
-  { text: 'HIMEM.SYS loaded', delay: 1000 },
-  { text: 'EMM386 memory manager active', delay: 1200 },
-  { text: 'Sound Blaster 16 detected on IRQ 5', delay: 1500 },
-  { text: '', delay: 1700 },
-  { text: 'Loading CHIPTUNE.EXE...', delay: 1900 },
-  { text: '  [OK]  4-channel square wave engine', delay: 2200 },
-  { text: '  [OK]  Triangle oscillator module', delay: 2500 },
-  { text: '  [OK]  Noise generator (LFSR mode)', delay: 2800 },
-  { text: '  [OK]  16-step sequencer grid', delay: 3100 },
-  { text: '  [OK]  WAV export renderer', delay: 3400 },
-  { text: '', delay: 3600 },
-  { text: 'CHIPTUNE COMPOSER v1.0 — READY.', delay: 3800 },
-];
-
-let lineIdx = 0;
-function printNextLine() {
-  if (lineIdx >= bootLines.length) {
-    setTimeout(() => {
-      bootEl.classList.add('fade-out');
-      setTimeout(() => {
-        bootEl.remove();
-        buildUI();
-        drawVis();
-      }, 800);
-    }, 500);
-    return;
-  }
-  const { text, delay } = bootLines[lineIdx];
-  lineIdx++;
-  const prev = bootLines[lineIdx - 2];
-  const dt = lineIdx === 1 ? delay : delay - (prev?.delay ?? 0);
-  setTimeout(() => {
-    bootTextEl.textContent += text + '\n';
-    printNextLine();
-  }, dt);
-}
+const bootEl = document.getElementById('boot');
 
 function startBoot() {
-  bootPress.style.display = 'none';
-  bootSequence.style.display = 'block';
   audioCtx.resume().then(() => {
     beep(220, 0.08); setTimeout(() => beep(330, 0.08), 100); setTimeout(() => beep(440, 0.15), 200);
   });
-  printNextLine();
+  bootEl.classList.add('fade-out');
+  setTimeout(() => {
+    bootEl.remove();
+    buildUI();
+    drawVis();
+  }, 800);
 }
 
 document.addEventListener('keydown', startBoot, { once: true });
