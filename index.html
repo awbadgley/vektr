@@ -1071,27 +1071,14 @@ function onStepClick(e, ci, si) {
   const steps = state.channels[ci].steps;
 
   if (steps[si]) {
-    // Already on — select it for note editing, or deactivate if already selected
+    // Already on — toggle it off
+    steps[si] = null;
     if (state.selectedStepIdx && state.selectedStepIdx.ch === ci && state.selectedStepIdx.step === si) {
-      // Deactivate
-      steps[si] = null;
       state.selectedStepIdx = null;
-      document.querySelectorAll('.step').forEach(el => el.classList.remove('selected-step'));
-      renderStep(ci, si);
-      beep(200, 0.04, 0.03);
-    } else {
-      // Select it
-      document.querySelectorAll('.step').forEach(el => el.classList.remove('selected-step'));
-      e.currentTarget.classList.add('selected-step');
-      state.selectedStepIdx = { ch: ci, step: si };
-      // Sync note display to step's note
-      state.selectedNote = steps[si].note;
-      state.selectedOctave = steps[si].octave;
-      buildKeyboard();
-      updateNoteDisplay();
-      // Preview
-      playNote(ci, steps[si].note, steps[si].octave);
     }
+    document.querySelectorAll('.step').forEach(el => el.classList.remove('selected-step'));
+    renderStep(ci, si);
+    beep(200, 0.04, 0.03);
   } else {
     // Activate with selected note
     steps[si] = { note: state.selectedNote, octave: state.selectedOctave };
