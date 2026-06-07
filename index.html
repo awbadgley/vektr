@@ -801,8 +801,8 @@ const state = {
   selectedOctave:  4,
   selectedStepIdx: null,  // {ch, step} of the currently-selected step cell
   channels: [
-    { name:'PULSE 1',  type:'square',   muted:false, volume:0.25, steps: Array(16).fill(null) },
-    { name:'PULSE 2',  type:'square',   muted:false, volume:0.25, steps: Array(16).fill(null) },
+    { name:'PULSE 1',  type:'pulse50',  muted:false, volume:0.25, steps: Array(16).fill(null) },
+    { name:'PULSE 2',  type:'pulse25',  muted:false, volume:0.25, steps: Array(16).fill(null) },
     { name:'TRIANGLE', type:'triangle', muted:false, volume:0.3,  steps: Array(16).fill(null) },
     { name:'NOISE',    type:'noise',    muted:false, volume:0.15, steps: Array(16).fill(null) },
   ]
@@ -811,6 +811,20 @@ const state = {
 
 // ── Audio ────────────────────────────────────────────────────────────────────
 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+// Build a PeriodicWave for a given pulse duty cycle (0–1).
+// duty=0.5 → classic square; duty=0.25 → thinner NES pulse 2 sound.
+function createPulseWave(duty) {
+  const n = 256;
+  const real = new Float32Array(n);
+  const imag = new Float32Array(n);
+  for (let k = 1; k < n; k++) {
+    imag[k] = (2 / (k * Math.PI)) * Math.sin(k * Math.PI * duty);
+  }
+  return audioCtx.createPeriodicWave(real, imag, { disableNormalization: false });
+}
+const pulse50Wave = createPulseWave(0.5);   // Pulse 1 — full square
+const pulse25Wave = createPulseWave(0.25);  // Pulse 2 — thin, nasal
 
 function noteToFreq(note, octave) {
   const semi = NOTES.indexOf(note) + (octave - 4) * 12;
@@ -842,7 +856,13 @@ function playNote(chIdx, note, octave) {
   const osc = audioCtx.createOscillator();
   const gain = audioCtx.createGain();
   osc.connect(gain); gain.connect(audioCtx.destination);
-  osc.type = ch.type;
+  if (ch.type === 'pulse50') {
+    osc.setPeriodicWave(pulse50Wave);
+  } else if (ch.type === 'pulse25') {
+    osc.setPeriodicWave(pulse25Wave);
+  } else {
+    osc.type = ch.type;
+  }
   osc.frequency.setValueAtTime(freq, now);
   gain.gain.setValueAtTime(ch.volume, now);
   gain.gain.exponentialRampToValueAtTime(0.001, now + stepDuration * 0.85);
@@ -1173,7 +1193,13 @@ async function exportWAV() {
         const osc = offCtx.createOscillator();
         const gain = offCtx.createGain();
         osc.connect(gain); gain.connect(offCtx.destination);
-        osc.type = ch.type;
+        if (ch.type === 'pulse50') {
+          osc.setPeriodicWave(offCtx.createPeriodicWave(...[new Float32Array(256), (() => { const im = new Float32Array(256); for (let k=1;k<256;k++) im[k]=(2/(k*Math.PI))*Math.sin(k*Math.PI*0.5); return im; })()]));
+        } else if (ch.type === 'pulse25') {
+          osc.setPeriodicWave(offCtx.createPeriodicWave(...[new Float32Array(256), (() => { const im = new Float32Array(256); for (let k=1;k<256;k++) im[k]=(2/(k*Math.PI))*Math.sin(k*Math.PI*0.25); return im; })()]));
+        } else {
+          osc.type = ch.type;
+        }
         osc.frequency.setValueAtTime(freq, startTime);
         gain.gain.setValueAtTime(ch.volume, startTime);
         gain.gain.exponentialRampToValueAtTime(0.001, startTime + stepDur * 0.85);
