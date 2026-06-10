@@ -978,12 +978,12 @@
       <button class="pat-btn" id="pat-copy" title="Copy this pattern into the next slot">COPY▸</button>
       <span class="pat-sep"></span>
       <button class="pat-btn" id="song-toggle" title="Play the chain instead of one pattern">SONG: OFF</button>
-      <span class="pat-label">CHAIN</span>
-      <span id="chain-display">A</span>
-      <button class="pat-btn" id="chain-add" title="Append current pattern to the chain">+</button>
-      <button class="pat-btn" id="chain-clear" title="Reset chain">✕</button>
-      <span class="pat-sep"></span>
-      <button class="pat-btn" id="arp-toggle" title="Arpeggiate the PULSE channel (C64-style chords)">ARP: OFF</button>
+      <span id="chain-wrap" style="display:none; align-items:center; gap:calc(var(--u)*0.5);">
+        <span class="pat-label">CHAIN</span>
+        <span id="chain-display">A</span>
+        <button class="pat-btn" id="chain-add" title="Append current pattern to the chain">+</button>
+        <button class="pat-btn" id="chain-clear" title="Reset chain">✕</button>
+      </span>
     </div>
 
     <!-- Top row: 4 evenly-spaced zones -->
@@ -1001,6 +1001,7 @@
             <button class="scale-btn" id="scale-root-btn">C</button>
             <button class="scale-btn" id="scale-name-btn">PENTA</button>
             <button class="scale-btn" id="rand-btn">🎲 RAND</button>
+            <button class="pat-btn" id="arp-toggle" title="Arpeggiate the PULSE channel (C64-style chords)">ARP: OFF</button>
           </div>
         </div>
       </div>
@@ -1957,6 +1958,8 @@ function renderPatternRow() {
   });
   document.getElementById('chain-display').textContent =
     state.chain.map(p => PATTERN_NAMES[p]).join(' ');
+  // Chain editor only matters in song mode — hide it otherwise
+  document.getElementById('chain-wrap').style.display = state.songMode ? 'inline-flex' : 'none';
   const songBtn = document.getElementById('song-toggle');
   songBtn.textContent = 'SONG: ' + (state.songMode ? 'ON' : 'OFF');
   songBtn.classList.toggle('on', state.songMode);
