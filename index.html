@@ -396,13 +396,35 @@
       100%{ transform:none; filter:none; }
     }
 
-    /* Boot POST terminal */
-    #boot-post {
-      font-family:'Share Tech Mono', monospace;
-      font-size:clamp(0.7rem, calc(var(--u)*1.1), 1.2rem);
-      color:#39ff14; white-space:pre; line-height:1.9;
-      letter-spacing:0.08em; text-align:left;
-      text-shadow:0 0 6px rgba(57,255,20,0.8), 0 0 18px rgba(57,255,20,0.35);
+    /* CRT power-on: dot → horizontal line → full-screen flash → fade */
+    #crt-line {
+      position:absolute; left:50%; top:50%;
+      width:100vw; height:100vh;
+      transform:translate(-50%,-50%) scale(0.004,0.004);
+      background:#fff;
+      box-shadow:0 0 40px #fff, 0 0 140px rgba(180,220,255,0.9);
+      animation:crt-on 1.15s cubic-bezier(0.25,0.6,0.3,1) forwards;
+      pointer-events:none;
+    }
+    @keyframes crt-on {
+      0%   { transform:translate(-50%,-50%) scale(0.004,0.004); opacity:0; }
+      8%   { transform:translate(-50%,-50%) scale(0.004,0.004); opacity:1; }
+      40%  { transform:translate(-50%,-50%) scale(1,0.004); opacity:1; }
+      62%  { transform:translate(-50%,-50%) scale(1,1); opacity:0.95; }
+      100% { transform:translate(-50%,-50%) scale(1,1); opacity:0; }
+    }
+
+    /* Tube warm-up: picture starts dim and unstable, then settles */
+    body.warming #cabinet, body.warming #starfield {
+      animation:warmup 1.7s ease-out;
+    }
+    @keyframes warmup {
+      0%   { filter:brightness(0.25) blur(2.5px) saturate(0.4); }
+      25%  { filter:brightness(1.45) blur(0.8px) saturate(1.3); }
+      40%  { filter:brightness(0.8); }
+      55%  { filter:brightness(1.18); }
+      70%  { filter:brightness(0.93); }
+      100% { filter:none; }
     }
 
     /* Attract mode — cabinet luring quarters */
@@ -2587,24 +2609,44 @@ document.addEventListener('keydown', e => {
 // Loop button starts active
 document.getElementById('btn-loop').classList.add('active');
 
-// ── Boot Screen — fake POST sequence ──────────────────────────────────────────
+// ── Boot Screen — CRT power-on ────────────────────────────────────────────────
 const bootEl = document.getElementById('boot');
 let bootStarted = false;
 let bootFinished = false;
 
-const POST_LINES = [
-  'VEKTR BIOS v1.1',
-  'MEM CHECK: 64K ........ OK',
-  'AUDIO CHIP: SID-86 DETECTED',
-  'CH 1-4 ................ OK',
-  'LOADING SEQUENCER...',
-  'READY.',
-];
+// Degauss thunk + tube hum swelling up
+function crtPowerSound() {
+  const t = audioCtx.currentTime;
+  // Low hum rising in pitch as the tube wakes
+  const hum = audioCtx.createOscillator();
+  const humGain = audioCtx.createGain();
+  hum.type = 'sine';
+  hum.frequency.setValueAtTime(50, t);
+  hum.frequency.exponentialRampToValueAtTime(120, t + 0.9);
+  humGain.gain.setValueAtTime(0.0001, t);
+  humGain.gain.exponentialRampToValueAtTime(0.1, t + 0.25);
+  humGain.gain.exponentialRampToValueAtTime(0.0001, t + 1.2);
+  hum.connect(humGain); humGain.connect(masterGain);
+  hum.start(t); hum.stop(t + 1.25);
+  // Static crackle at switch-on
+  const crackleDur = 0.08;
+  const buf = audioCtx.createBuffer(1, Math.ceil(audioCtx.sampleRate * crackleDur), audioCtx.sampleRate);
+  const d = buf.getChannelData(0);
+  for (let i = 0; i < d.length; i++) d[i] = (Math.random() * 2 - 1) * (1 - i / d.length);
+  const src = audioCtx.createBufferSource();
+  const srcGain = audioCtx.createGain();
+  src.buffer = buf;
+  srcGain.gain.value = 0.12;
+  src.connect(srcGain); srcGain.connect(masterGain);
+  src.start(t + 0.02);
+}
 
 function finishBoot() {
   if (bootFinished) return;
   bootFinished = true;
   bootEl.classList.add('fade-out');
+  document.body.classList.add('warming');
+  setTimeout(() => document.body.classList.remove('warming'), 1750);
   setTimeout(() => {
     bootEl.remove();
     loadFromHash();
@@ -2617,27 +2659,15 @@ function finishBoot() {
 }
 
 function startBoot() {
-  if (bootStarted) { finishBoot(); return; }  // second press skips the POST
+  if (bootStarted) { finishBoot(); return; }  // second press skips straight in
   bootStarted = true;
-  audioCtx.resume().then(() => {
-    beep(220, 0.08); setTimeout(() => beep(330, 0.08), 100); setTimeout(() => beep(440, 0.15), 200);
-  });
+  audioCtx.resume().then(crtPowerSound);
   document.getElementById('boot-press').style.display = 'none';
-  const post = document.createElement('div');
-  post.id = 'boot-post';
-  bootEl.appendChild(post);
-  let i = 0;
-  (function tick() {
-    if (bootFinished) return;
-    if (i < POST_LINES.length) {
-      post.textContent += POST_LINES[i] + '\n';
-      beep(420 + i * 110, 0.03, 0.035);
-      i++;
-      setTimeout(tick, i === POST_LINES.length ? 550 : 240);
-    } else {
-      finishBoot();
-    }
-  })();
+  const line = document.createElement('div');
+  line.id = 'crt-line';
+  bootEl.appendChild(line);
+  // Reveal the app as the white flash peaks and starts to fade
+  setTimeout(finishBoot, 720);
 }
 
 document.addEventListener('keydown', startBoot);
